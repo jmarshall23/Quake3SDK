@@ -716,7 +716,6 @@ void CL_InitCGame( void ) {
 	const char			*info;
 	const char			*mapname;
 	int					t1, t2;
-	vmInterpret_t		interpret;
 
 	t1 = Sys_Milliseconds();
 
@@ -729,14 +728,7 @@ void CL_InitCGame( void ) {
 	Com_sprintf( cl.mapname, sizeof( cl.mapname ), "maps/%s.bsp", mapname );
 
 	// load the dll or bytecode
-	if ( cl_connectedToPureServer != 0 ) {
-		// if sv_pure is set we only allow qvms to be loaded
-		interpret = VMI_COMPILED;
-	}
-	else {
-		interpret = Cvar_VariableValue( "vm_cgame" );
-	}
-	cgvm = VM_Create( "cgame", CL_CgameSystemCalls, interpret );
+	cgvm = VM_Create( "cgame", CL_CgameSystemCalls, VMI_NATIVE);
 	if ( !cgvm ) {
 		Com_Error( ERR_DROP, "VM_Create on cgame failed" );
 	}

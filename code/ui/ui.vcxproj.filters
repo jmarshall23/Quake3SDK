@@ -165,4 +165,9 @@
       <Filter>Header Files</Filter>
     </CustomBuild>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="menudef.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
 </Project>

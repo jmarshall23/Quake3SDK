@@ -12,8 +12,10 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
-    <SccProjectName>"$/source/code/bspc", IGAAAAAA</SccProjectName>
-    <SccLocalPath>.</SccLocalPath>
+    <SccProjectName>
+    </SccProjectName>
+    <SccLocalPath>
+    </SccLocalPath>
     <ProjectGuid>{126219BD-AB56-40E0-A431-566547739186}</ProjectGuid>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -68,7 +70,7 @@
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
     </ClCompile>
     <Link>
-      <OutputFile>..\Debug\bspc.exe</OutputFile>
+      <OutputFile>../../tools/bspc.exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>.\Debug/bspc.pdb</ProgramDatabaseFile>
@@ -101,7 +103,7 @@
       <SuppressStartupBanner>true</SuppressStartupBanner>
     </ClCompile>
     <Link>
-      <OutputFile>..\Release\bspc.exe</OutputFile>
+      <OutputFile>../../tools/bspc.exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <ProgramDatabaseFile>.\Release/bspc.pdb</ProgramDatabaseFile>
       <SubSystem>Console</SubSystem>

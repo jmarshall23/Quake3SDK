@@ -203,7 +203,7 @@
     </ClCompile>
     <Link>
       <AdditionalDependencies>winmm.lib;wsock32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>.\Debug/quake3.exe</OutputFile>
+      <OutputFile>../quake3.exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>.\Debug/quake3.pdb</ProgramDatabaseFile>

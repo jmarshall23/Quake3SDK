@@ -21,13 +21,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
 #include "qbsp.h"
-#include "float.h"
 #include "../botlib/aasfile.h"
 #include "aas_store.h"
 #include "aas_cfg.h"
 #include "../botlib/l_precomp.h"
 #include "../botlib/l_struct.h"
 #include "../botlib/l_libvar.h"
+
+#define FLT_MAX          3.402823466e+38F        // max value
 
 //structure field offsets
 #define BBOX_OFS(x) (int)&(((aas_bbox_t *)0)->x)
