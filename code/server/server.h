@@ -213,7 +213,6 @@ typedef struct {
 
 extern	serverStatic_t	svs;				// persistant server info across maps
 extern	server_t		sv;					// cleared each map
-extern	vm_t			*gvm;				// game virtual machine
 
 #define	MAX_MASTER_SERVERS	5
 
@@ -294,7 +293,7 @@ void SV_DropClient( client_t *drop, const char *reason );
 
 void SV_ExecuteClientCommand( client_t *cl, const char *s, qboolean clientOK );
 void SV_ClientThink (client_t *cl, usercmd_t *cmd);
-
+void SV_ClientNumThink(int clientNum, usercmd_t* cmd);
 void SV_WriteDownloadToClient( client_t *cl , msg_t *msg );
 
 //

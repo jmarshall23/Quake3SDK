@@ -1096,23 +1096,23 @@ void CL_KeyEvent (int key, qboolean down, unsigned time) {
 		// escape always gets out of CGAME stuff
 		if (cls.keyCatchers & KEYCATCH_CGAME) {
 			cls.keyCatchers &= ~KEYCATCH_CGAME;
-			VM_Call (cgvm, CG_EVENT_HANDLING, CGAME_EVENT_NONE);
+			cgame->CG_EventHandling(CGAME_EVENT_NONE);
 			return;
 		}
 
 		if ( !( cls.keyCatchers & KEYCATCH_UI ) ) {
 			if ( cls.state == CA_ACTIVE && !clc.demoplaying ) {
-				VM_Call( uivm, UI_SET_ACTIVE_MENU, UIMENU_INGAME );
+				ui->UI_SetActiveMenu(UIMENU_INGAME);
 			}
 			else {
 				CL_Disconnect_f();
 				S_StopAllSounds();
-				VM_Call( uivm, UI_SET_ACTIVE_MENU, UIMENU_MAIN );
+				ui->UI_SetActiveMenu(UIMENU_MAIN);
 			}
 			return;
 		}
 
-		VM_Call( uivm, UI_KEY_EVENT, key, down );
+		ui->UI_KeyEvent(key, down);
 		return;
 	}
 
@@ -1127,10 +1127,10 @@ void CL_KeyEvent (int key, qboolean down, unsigned time) {
 
 		CL_AddKeyUpCommands( key, kb );
 
-		if ( cls.keyCatchers & KEYCATCH_UI && uivm ) {
-			VM_Call( uivm, UI_KEY_EVENT, key, down );
-		} else if ( cls.keyCatchers & KEYCATCH_CGAME && cgvm ) {
-			VM_Call( cgvm, CG_KEY_EVENT, key, down );
+		if ( cls.keyCatchers & KEYCATCH_UI && ui ) {
+			ui->UI_KeyEvent(key, down);
+		} else if ( cls.keyCatchers & KEYCATCH_CGAME && cgame ) {
+			cgame->CG_KeyEvent(key, down);
 		} 
 
 		return;
@@ -1141,12 +1141,12 @@ void CL_KeyEvent (int key, qboolean down, unsigned time) {
 	if ( cls.keyCatchers & KEYCATCH_CONSOLE ) {
 		Console_Key( key );
 	} else if ( cls.keyCatchers & KEYCATCH_UI ) {
-		if ( uivm ) {
-			VM_Call( uivm, UI_KEY_EVENT, key, down );
+		if ( ui ) {
+			ui->UI_KeyEvent(key, down);
 		} 
 	} else if ( cls.keyCatchers & KEYCATCH_CGAME ) {
-		if ( cgvm ) {
-			VM_Call( cgvm, CG_KEY_EVENT, key, down );
+		if (cgame) {
+			cgame->CG_KeyEvent(key, down);
 		} 
 	} else if ( cls.keyCatchers & KEYCATCH_MESSAGE ) {
 		Message_Key( key );
@@ -1216,7 +1216,7 @@ void CL_CharEvent( int key ) {
 	}
 	else if ( cls.keyCatchers & KEYCATCH_UI )
 	{
-		VM_Call( uivm, UI_KEY_EVENT, key | K_CHAR_FLAG, qtrue );
+		ui->UI_KeyEvent(key | K_CHAR_FLAG, qtrue);
 	}
 	else if ( cls.keyCatchers & KEYCATCH_MESSAGE ) 
 	{

@@ -62,6 +62,7 @@ typedef struct aas_link_s
 {
 	int entnum;
 	int areanum;
+	int linknum;
 	struct aas_link_s *next_ent, *prev_ent;
 	struct aas_link_s *next_area, *prev_area;
 } aas_link_t;

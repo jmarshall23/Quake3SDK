@@ -26,7 +26,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 extern	botlib_export_t	*botlib_export;
 
-vm_t *uivm;
+uiExport_t* ui;
+static intptr_t dllHandle = NULL;
 
 /*
 ====================
@@ -746,393 +747,18 @@ static int GetConfigString(int index, char *buf, int size)
 
 /*
 ====================
-FloatAsInt
-====================
-*/
-static int FloatAsInt( float f ) {
-	int		temp;
-
-	*(float *)&temp = f;
-
-	return temp;
-}
-
-void *VM_ArgPtr( int intValue );
-#define	VMA(x) VM_ArgPtr(args[x])
-#define	VMF(x)	((float *)args)[x]
-
-/*
-====================
-CL_UISystemCalls
-
-The ui module is making a system call
-====================
-*/
-int CL_UISystemCalls( int *args ) {
-	switch( args[0] ) {
-	case UI_ERROR:
-		Com_Error( ERR_DROP, "%s", VMA(1) );
-		return 0;
-
-	case UI_PRINT:
-		Com_Printf( "%s", VMA(1) );
-		return 0;
-
-	case UI_MILLISECONDS:
-		return Sys_Milliseconds();
-
-	case UI_CVAR_REGISTER:
-		Cvar_Register( VMA(1), VMA(2), VMA(3), args[4] ); 
-		return 0;
-
-	case UI_CVAR_UPDATE:
-		Cvar_Update( VMA(1) );
-		return 0;
-
-	case UI_CVAR_SET:
-		Cvar_Set( VMA(1), VMA(2) );
-		return 0;
-
-	case UI_CVAR_VARIABLEVALUE:
-		return FloatAsInt( Cvar_VariableValue( VMA(1) ) );
-
-	case UI_CVAR_VARIABLESTRINGBUFFER:
-		Cvar_VariableStringBuffer( VMA(1), VMA(2), args[3] );
-		return 0;
-
-	case UI_CVAR_SETVALUE:
-		Cvar_SetValue( VMA(1), VMF(2) );
-		return 0;
-
-	case UI_CVAR_RESET:
-		Cvar_Reset( VMA(1) );
-		return 0;
-
-	case UI_CVAR_CREATE:
-		Cvar_Get( VMA(1), VMA(2), args[3] );
-		return 0;
-
-	case UI_CVAR_INFOSTRINGBUFFER:
-		Cvar_InfoStringBuffer( args[1], VMA(2), args[3] );
-		return 0;
-
-	case UI_ARGC:
-		return Cmd_Argc();
-
-	case UI_ARGV:
-		Cmd_ArgvBuffer( args[1], VMA(2), args[3] );
-		return 0;
-
-	case UI_CMD_EXECUTETEXT:
-		Cbuf_ExecuteText( args[1], VMA(2) );
-		return 0;
-
-	case UI_FS_FOPENFILE:
-		return FS_FOpenFileByMode( VMA(1), VMA(2), args[3] );
-
-	case UI_FS_READ:
-		FS_Read2( VMA(1), args[2], args[3] );
-		return 0;
-
-	case UI_FS_WRITE:
-		FS_Write( VMA(1), args[2], args[3] );
-		return 0;
-
-	case UI_FS_FCLOSEFILE:
-		FS_FCloseFile( args[1] );
-		return 0;
-
-	case UI_FS_GETFILELIST:
-		return FS_GetFileList( VMA(1), VMA(2), VMA(3), args[4] );
-
-	case UI_FS_SEEK:
-		return FS_Seek( args[1], args[2], args[3] );
-	
-	case UI_R_REGISTERMODEL:
-		return re.RegisterModel( VMA(1) );
-
-	case UI_R_REGISTERSKIN:
-		return re.RegisterSkin( VMA(1) );
-
-	case UI_R_REGISTERSHADERNOMIP:
-		return re.RegisterShaderNoMip( VMA(1) );
-
-	case UI_R_CLEARSCENE:
-		re.ClearScene();
-		return 0;
-
-	case UI_R_ADDREFENTITYTOSCENE:
-		re.AddRefEntityToScene( VMA(1) );
-		return 0;
-
-	case UI_R_ADDPOLYTOSCENE:
-		re.AddPolyToScene( args[1], args[2], VMA(3), 1 );
-		return 0;
-
-	case UI_R_ADDLIGHTTOSCENE:
-		re.AddLightToScene( VMA(1), VMF(2), VMF(3), VMF(4), VMF(5) );
-		return 0;
-
-	case UI_R_RENDERSCENE:
-		re.RenderScene( VMA(1) );
-		return 0;
-
-	case UI_R_SETCOLOR:
-		re.SetColor( VMA(1) );
-		return 0;
-
-	case UI_R_DRAWSTRETCHPIC:
-		re.DrawStretchPic( VMF(1), VMF(2), VMF(3), VMF(4), VMF(5), VMF(6), VMF(7), VMF(8), args[9] );
-		return 0;
-
-  case UI_R_MODELBOUNDS:
-		re.ModelBounds( args[1], VMA(2), VMA(3) );
-		return 0;
-
-	case UI_UPDATESCREEN:
-		SCR_UpdateScreen();
-		return 0;
-
-	case UI_CM_LERPTAG:
-		re.LerpTag( VMA(1), args[2], args[3], args[4], VMF(5), VMA(6) );
-		return 0;
-
-	case UI_S_REGISTERSOUND:
-		return S_RegisterSound( VMA(1), args[2] );
-
-	case UI_S_STARTLOCALSOUND:
-		S_StartLocalSound( args[1], args[2] );
-		return 0;
-
-	case UI_KEY_KEYNUMTOSTRINGBUF:
-		Key_KeynumToStringBuf( args[1], VMA(2), args[3] );
-		return 0;
-
-	case UI_KEY_GETBINDINGBUF:
-		Key_GetBindingBuf( args[1], VMA(2), args[3] );
-		return 0;
-
-	case UI_KEY_SETBINDING:
-		Key_SetBinding( args[1], VMA(2) );
-		return 0;
-
-	case UI_KEY_ISDOWN:
-		return Key_IsDown( args[1] );
-
-	case UI_KEY_GETOVERSTRIKEMODE:
-		return Key_GetOverstrikeMode();
-
-	case UI_KEY_SETOVERSTRIKEMODE:
-		Key_SetOverstrikeMode( args[1] );
-		return 0;
-
-	case UI_KEY_CLEARSTATES:
-		Key_ClearStates();
-		return 0;
-
-	case UI_KEY_GETCATCHER:
-		return Key_GetCatcher();
-
-	case UI_KEY_SETCATCHER:
-		Key_SetCatcher( args[1] );
-		return 0;
-
-	case UI_GETCLIPBOARDDATA:
-		GetClipboardData( VMA(1), args[2] );
-		return 0;
-
-	case UI_GETCLIENTSTATE:
-		GetClientState( VMA(1) );
-		return 0;		
-
-	case UI_GETGLCONFIG:
-		CL_GetGlconfig( VMA(1) );
-		return 0;
-
-	case UI_GETCONFIGSTRING:
-		return GetConfigString( args[1], VMA(2), args[3] );
-
-	case UI_LAN_LOADCACHEDSERVERS:
-		LAN_LoadCachedServers();
-		return 0;
-
-	case UI_LAN_SAVECACHEDSERVERS:
-		LAN_SaveServersToCache();
-		return 0;
-
-	case UI_LAN_ADDSERVER:
-		return LAN_AddServer(args[1], VMA(2), VMA(3));
-
-	case UI_LAN_REMOVESERVER:
-		LAN_RemoveServer(args[1], VMA(2));
-		return 0;
-
-	case UI_LAN_GETPINGQUEUECOUNT:
-		return LAN_GetPingQueueCount();
-
-	case UI_LAN_CLEARPING:
-		LAN_ClearPing( args[1] );
-		return 0;
-
-	case UI_LAN_GETPING:
-		LAN_GetPing( args[1], VMA(2), args[3], VMA(4) );
-		return 0;
-
-	case UI_LAN_GETPINGINFO:
-		LAN_GetPingInfo( args[1], VMA(2), args[3] );
-		return 0;
-
-	case UI_LAN_GETSERVERCOUNT:
-		return LAN_GetServerCount(args[1]);
-
-	case UI_LAN_GETSERVERADDRESSSTRING:
-		LAN_GetServerAddressString( args[1], args[2], VMA(3), args[4] );
-		return 0;
-
-	case UI_LAN_GETSERVERINFO:
-		LAN_GetServerInfo( args[1], args[2], VMA(3), args[4] );
-		return 0;
-
-	case UI_LAN_GETSERVERPING:
-		return LAN_GetServerPing( args[1], args[2] );
-
-	case UI_LAN_MARKSERVERVISIBLE:
-		LAN_MarkServerVisible( args[1], args[2], args[3] );
-		return 0;
-
-	case UI_LAN_SERVERISVISIBLE:
-		return LAN_ServerIsVisible( args[1], args[2] );
-
-	case UI_LAN_UPDATEVISIBLEPINGS:
-		return LAN_UpdateVisiblePings( args[1] );
-
-	case UI_LAN_RESETPINGS:
-		LAN_ResetPings( args[1] );
-		return 0;
-
-	case UI_LAN_SERVERSTATUS:
-		return LAN_GetServerStatus( VMA(1), VMA(2), args[3] );
-
-	case UI_LAN_COMPARESERVERS:
-		return LAN_CompareServers( args[1], args[2], args[3], args[4], args[5] );
-
-	case UI_MEMORY_REMAINING:
-		return Hunk_MemoryRemaining();
-
-	case UI_GET_CDKEY:
-		CLUI_GetCDKey( VMA(1), args[2] );
-		return 0;
-
-	case UI_SET_CDKEY:
-		CLUI_SetCDKey( VMA(1) );
-		return 0;
-	
-	case UI_SET_PBCLSTATUS:
-		return 0;	
-
-	case UI_R_REGISTERFONT:
-		re.RegisterFont( VMA(1), args[2], VMA(3));
-		return 0;
-
-	case UI_MEMSET:
-		Com_Memset( VMA(1), args[2], args[3] );
-		return 0;
-
-	case UI_MEMCPY:
-		Com_Memcpy( VMA(1), VMA(2), args[3] );
-		return 0;
-
-	case UI_STRNCPY:
-		return (int)strncpy( VMA(1), VMA(2), args[3] );
-
-	case UI_SIN:
-		return FloatAsInt( sin( VMF(1) ) );
-
-	case UI_COS:
-		return FloatAsInt( cos( VMF(1) ) );
-
-	case UI_ATAN2:
-		return FloatAsInt( atan2( VMF(1), VMF(2) ) );
-
-	case UI_SQRT:
-		return FloatAsInt( sqrt( VMF(1) ) );
-
-	case UI_FLOOR:
-		return FloatAsInt( floor( VMF(1) ) );
-
-	case UI_CEIL:
-		return FloatAsInt( ceil( VMF(1) ) );
-
-	case UI_PC_ADD_GLOBAL_DEFINE:
-		return botlib_export->PC_AddGlobalDefine( VMA(1) );
-	case UI_PC_LOAD_SOURCE:
-		return botlib_export->PC_LoadSourceHandle( VMA(1) );
-	case UI_PC_FREE_SOURCE:
-		return botlib_export->PC_FreeSourceHandle( args[1] );
-	case UI_PC_READ_TOKEN:
-		return botlib_export->PC_ReadTokenHandle( args[1], VMA(2) );
-	case UI_PC_SOURCE_FILE_AND_LINE:
-		return botlib_export->PC_SourceFileAndLine( args[1], VMA(2), VMA(3) );
-
-	case UI_S_STOPBACKGROUNDTRACK:
-		S_StopBackgroundTrack();
-		return 0;
-	case UI_S_STARTBACKGROUNDTRACK:
-		S_StartBackgroundTrack( VMA(1), VMA(2));
-		return 0;
-
-	case UI_REAL_TIME:
-		return Com_RealTime( VMA(1) );
-
-	case UI_CIN_PLAYCINEMATIC:
-	  Com_DPrintf("UI_CIN_PlayCinematic\n");
-	  return CIN_PlayCinematic(VMA(1), args[2], args[3], args[4], args[5], args[6]);
-
-	case UI_CIN_STOPCINEMATIC:
-	  return CIN_StopCinematic(args[1]);
-
-	case UI_CIN_RUNCINEMATIC:
-	  return CIN_RunCinematic(args[1]);
-
-	case UI_CIN_DRAWCINEMATIC:
-	  CIN_DrawCinematic(args[1]);
-	  return 0;
-
-	case UI_CIN_SETEXTENTS:
-	  CIN_SetExtents(args[1], args[2], args[3], args[4], args[5]);
-	  return 0;
-
-	case UI_R_REMAP_SHADER:
-		re.RemapShader( VMA(1), VMA(2), VMA(3) );
-		return 0;
-
-	case UI_VERIFY_CDKEY:
-		return CL_CDKeyValidate(VMA(1), VMA(2));
-
-
-		
-	default:
-		Com_Error( ERR_DROP, "Bad UI system trap: %i", args[0] );
-
-	}
-
-	return 0;
-}
-
-/*
-====================
 CL_ShutdownUI
 ====================
 */
 void CL_ShutdownUI( void ) {
 	cls.keyCatchers &= ~KEYCATCH_UI;
 	cls.uiStarted = qfalse;
-	if ( !uivm ) {
+	if (!dllHandle) {
 		return;
 	}
-	VM_Call( uivm, UI_SHUTDOWN );
-	VM_Free( uivm );
-	uivm = NULL;
+	Sys_UnloadDll(dllHandle);
+	ui = NULL;
+	dllHandle = NULL;
 }
 
 /*
@@ -1144,38 +770,111 @@ CL_InitUI
 
 void CL_InitUI( void ) {
 	int		v;
-	vmInterpret_t		interpret;
+	static uiImport_t			uiExport;
 
-	// load the dll or bytecode
-	interpret = VMI_NATIVE;
-	uivm = VM_Create( "ui", CL_UISystemCalls, interpret );
-	if ( !uivm ) {
-		Com_Error( ERR_FATAL, "VM_Create on UI failed" );
+	uiExport.Com_Error = Com_Error;
+	uiExport.Com_Printf = Com_Printf;
+	uiExport.Sys_Milliseconds = Sys_Milliseconds;
+	uiExport.Cvar_Register = Cvar_Register;
+	uiExport.Cvar_Update = Cvar_Update;
+	uiExport.Cvar_Set = Cvar_Set;
+	uiExport.Cvar_VariableValue = Cvar_VariableValue;
+	uiExport.Cvar_VariableStringBuffer = Cvar_VariableStringBuffer;
+	uiExport.Cvar_SetValue = Cvar_SetValue;
+	uiExport.Cvar_Reset = Cvar_Reset;
+	uiExport.Cvar_Get = Cvar_Get;
+	uiExport.Cvar_InfoStringBuffer = Cvar_InfoStringBuffer;
+	uiExport.Cmd_Argc = Cmd_Argc;
+	uiExport.Cmd_ArgvBuffer = Cmd_ArgvBuffer;
+	uiExport.Cbuf_ExecuteText = Cbuf_ExecuteText;
+	uiExport.FS_FOpenFileByMode = FS_FOpenFileByMode;
+	uiExport.FS_Read2 = FS_Read2;
+	uiExport.FS_Write = FS_Write;
+	uiExport.FS_FCloseFile = FS_FCloseFile;
+	uiExport.FS_GetFileList = FS_GetFileList;
+	uiExport.FS_Seek = FS_Seek;
+	uiExport.re_RegisterModel = re.RegisterModel;
+	uiExport.re_RegisterSkin = re.RegisterSkin;
+	uiExport.re_RegisterShaderNoMip = re.RegisterShaderNoMip;
+	uiExport.re_ClearScene = re.ClearScene;
+	uiExport.re_AddRefEntityToScene = re.AddRefEntityToScene;
+	uiExport.re_AddPolyToScene = re.AddPolyToScene;
+	uiExport.re_AddLightToScene = re.AddLightToScene;
+	uiExport.re_RenderScene = re.RenderScene;
+	uiExport.re_SetColor = re.SetColor;
+	uiExport.re_DrawStretchPic = re.DrawStretchPic;
+	uiExport.re_ModelBounds = re.ModelBounds;
+	uiExport.SCR_UpdateScreen = SCR_UpdateScreen;
+	uiExport.re_LerpTag = re.LerpTag;
+	uiExport.S_RegisterSound = S_RegisterSound;
+	uiExport.S_StartLocalSound = S_StartLocalSound;
+	uiExport.Key_KeynumToStringBuf = Key_KeynumToStringBuf;
+	uiExport.Key_GetBindingBuf = Key_GetBindingBuf;
+	uiExport.Key_SetBinding = Key_SetBinding;
+	uiExport.Key_IsDown = Key_IsDown;
+	uiExport.Key_GetOverstrikeMode = Key_GetOverstrikeMode;
+	uiExport.Key_SetOverstrikeMode = Key_SetOverstrikeMode;
+	uiExport.Key_ClearStates = Key_ClearStates;
+	uiExport.Key_GetCatcher = Key_GetCatcher;
+	uiExport.Key_SetCatcher = Key_SetCatcher;
+	uiExport.GetClipboardData = GetClipboardData;
+	uiExport.GetClientState = GetClientState;
+	uiExport.CL_GetGlconfig = CL_GetGlconfig;
+	uiExport.GetConfigString = GetConfigString;
+	uiExport.LAN_GetServerCount = LAN_GetServerCount;
+	uiExport.LAN_GetServerAddressString = LAN_GetServerAddressString;
+	uiExport.LAN_GetServerInfo = LAN_GetServerInfo;
+	uiExport.LAN_GetServerPing = LAN_GetServerPing;
+	uiExport.LAN_GetPingQueueCount = LAN_GetPingQueueCount;
+	uiExport.LAN_ServerStatus = CL_ServerStatus;
+	uiExport.LAN_SaveCachedServers = LAN_SaveServersToCache;
+	uiExport.LAN_LoadCachedServers = LAN_LoadCachedServers;
+	uiExport.LAN_ResetPings = LAN_ResetPings;
+	uiExport.LAN_ClearPing = LAN_ClearPing;
+	uiExport.LAN_GetPing = LAN_GetPing;
+	uiExport.LAN_GetPingInfo = LAN_GetPingInfo;
+	uiExport.LAN_MarkServerVisible = LAN_MarkServerVisible;
+	uiExport.LAN_ServerIsVisible = LAN_ServerIsVisible;
+	uiExport.LAN_UpdateVisiblePings = LAN_UpdateVisiblePings;
+	uiExport.LAN_AddServer = LAN_AddServer;
+	uiExport.LAN_RemoveServer = LAN_RemoveServer;
+	uiExport.LAN_CompareServers = LAN_CompareServers;
+	uiExport.Hunk_MemoryRemaining = Hunk_MemoryRemaining;
+	uiExport.CLUI_GetCDKey = CLUI_GetCDKey;
+	uiExport.CLUI_SetCDKey = CLUI_SetCDKey;
+	uiExport.S_StopBackgroundTrack = S_StopBackgroundTrack;
+	uiExport.S_StartBackgroundTrack = S_StartBackgroundTrack;
+	uiExport.Com_RealTime = Com_RealTime;
+	uiExport.CIN_PlayCinematic = CIN_PlayCinematic;
+	uiExport.CIN_StopCinematic = CIN_StopCinematic;
+	uiExport.CIN_RunCinematic = CIN_RunCinematic;
+	uiExport.CIN_DrawCinematic = CIN_DrawCinematic;
+	uiExport.CIN_SetExtents = CIN_SetExtents;
+	uiExport.re_RemapShader = re.RemapShader;
+	uiExport.CL_CDKeyValidate = CL_CDKeyValidate;
+	uiExport.botlib_export_PC_AddGlobalDefine = botlib_export->PC_AddGlobalDefine;
+	uiExport.botlib_export_PC_LoadSourceHandle = botlib_export->PC_LoadSourceHandle;
+	uiExport.botlib_export_PC_FreeSourceHandle = botlib_export->PC_FreeSourceHandle;
+	uiExport.botlib_export_PC_ReadTokenHandle = botlib_export->PC_ReadTokenHandle;
+	uiExport.botlib_export_PC_SourceFileAndLine = botlib_export->PC_SourceFileAndLine;
+
+
+	// load the dll
+	dllHandle = Sys_DLL_Load("ui");
+	if (!dllHandle) {
+		Com_Error(ERR_DROP, "VM_Create on UI failed");
 	}
 
-	// sanity check
-	v = VM_Call( uivm, UI_GETAPIVERSION );
-	if (v == UI_OLD_API_VERSION) {
-//		Com_Printf(S_COLOR_YELLOW "WARNING: loading old Quake III Arena User Interface version %d\n", v );
-		// init for this gamestate
-		VM_Call( uivm, UI_INIT, (cls.state >= CA_AUTHORIZING && cls.state < CA_ACTIVE));
+	ui = Sys_DLL_CallEntry(dllHandle, &uiExport);
+	if (!ui) {
+		Com_Error(ERR_DROP, "VM_Create UI api was invalid");
 	}
-	else if (v != UI_API_VERSION) {
-		Com_Error( ERR_DROP, "User Interface is version %d, expected %d", v, UI_API_VERSION );
-		cls.uiStarted = qfalse;
-	}
-	else {
-		// init for this gamestate
-		VM_Call( uivm, UI_INIT, (cls.state >= CA_AUTHORIZING && cls.state < CA_ACTIVE) );
-	}
+
+	ui->UI_Init();
 }
 
 qboolean UI_usesUniqueCDKey() {
-	if (uivm) {
-		return (VM_Call( uivm, UI_HASUNIQUECDKEY) == qtrue);
-	} else {
-		return qfalse;
-	}
+	return qfalse;
 }
 
 /*
@@ -1186,9 +885,9 @@ See if the current console command is claimed by the ui
 ====================
 */
 qboolean UI_GameCommand( void ) {
-	if ( !uivm ) {
+	if ( !dllHandle ) {
 		return qfalse;
 	}
 
-	return VM_Call( uivm, UI_CONSOLE_COMMAND, cls.realtime );
+	return ui->UI_ConsoleCommand(cls.realtime);
 }

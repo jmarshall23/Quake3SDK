@@ -112,9 +112,11 @@ void AAS_InitAASLinkHeap(void)
 	} //end if
 	//link the links on the heap
 	aasworld.linkheap[0].prev_ent = NULL;
+	aasworld.linkheap[0].linknum = 0;
 	aasworld.linkheap[0].next_ent = &aasworld.linkheap[1];
 	for (i = 1; i < max_aaslinks-1; i++)
 	{
+		aasworld.linkheap[0].linknum = i;
 		aasworld.linkheap[i].prev_ent = &aasworld.linkheap[i - 1];
 		aasworld.linkheap[i].next_ent = &aasworld.linkheap[i + 1];
 	} //end for

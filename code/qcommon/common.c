@@ -1625,7 +1625,7 @@ void Hunk_Clear( void ) {
 	hunk_temp = &hunk_high;
 
 	Com_Printf( "Hunk_Clear: reset the hunk ok\n" );
-	VM_Clear();
+
 #ifdef HUNK_DEBUG
 	hunkblocks = NULL;
 #endif
@@ -2463,7 +2463,6 @@ void Com_Init( char *commandLine ) {
 
 	Sys_Init();
 	Netchan_Init( Com_Milliseconds() & 0xffff );	// pick a port value that should be nice and random
-	VM_Init();
 	SV_Init();
 
 	com_dedicated->modified = qfalse;
