@@ -82,6 +82,8 @@ public:
   }
   void Log(const char *pFormat, ...)
   {
+	  if (!m_pFile)
+		  return;
     va_list arg_ptr;
     va_start(arg_ptr, pFormat);
     fprintf(m_pFile, pFormat, arg_ptr);

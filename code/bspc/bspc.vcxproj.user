@@ -1,4 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <PropertyGroup />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LocalDebuggerCommand>C:\Projects\Quake3SDK\tools\bspc.exe</LocalDebuggerCommand>
+    <LocalDebuggerWorkingDirectory>C:\Projects\Quake3SDK\tools</LocalDebuggerWorkingDirectory>
+    <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+    <LocalDebuggerCommandArguments>-bsp2aas C:\Projects\Quake3SDK\baseq3\maps\q3dm1sample.bsp</LocalDebuggerCommandArguments>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LocalDebuggerCommand>C:\Projects\Quake3SDK\tools\bspc.exe</LocalDebuggerCommand>
+    <LocalDebuggerWorkingDirectory>C:\Projects\Quake3SDK\tools</LocalDebuggerWorkingDirectory>
+    <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+    <LocalDebuggerCommandArguments>-bsp2aas C:\Projects\Quake3SDK\baseq3\maps\q3dm1sample.bsp</LocalDebuggerCommandArguments>
+  </PropertyGroup>
 </Project>

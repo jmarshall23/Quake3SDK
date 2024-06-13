@@ -266,63 +266,19 @@ static void UI_SPLevelMenu_SetMenuItems( void ) {
 		trap_Cvar_SetValue( "ui_spSelection", selectedArenaSet * ARENAS_PER_TIER + selectedArena );
 	}
 
-	if( selectedArenaSet == trainingTier ) {
-		arenaInfo = UI_GetSpecialArenaInfo( "training" );
-		level = atoi( Info_ValueForKey( arenaInfo, "num" ) );
-		UI_SPLevelMenu_SetMenuArena( 0, level, arenaInfo );
-		levelMenuInfo.selectedArenaInfo = arenaInfo;
+	levelMenuInfo.item_maps[0].generic.x = 46;
+	Bitmap_Init(&levelMenuInfo.item_maps[0]);
+	levelMenuInfo.item_maps[0].generic.bottom += 18;
+	levelMenuInfo.numMaps = 4;
 
-		levelMenuInfo.item_maps[0].generic.x = 256;
-		Bitmap_Init( &levelMenuInfo.item_maps[0] );
-		levelMenuInfo.item_maps[0].generic.bottom += 32;
-		levelMenuInfo.numMaps = 1;
-
-		levelMenuInfo.item_maps[1].generic.flags |= QMF_INACTIVE;
-		levelMenuInfo.item_maps[2].generic.flags |= QMF_INACTIVE;
-		levelMenuInfo.item_maps[3].generic.flags |= QMF_INACTIVE;
-		levelMenuInfo.levelPicNames[1][0] = 0;
-		levelMenuInfo.levelPicNames[2][0] = 0;
-		levelMenuInfo.levelPicNames[3][0] = 0;
-		levelMenuInfo.item_maps[1].shader = 0;
-		levelMenuInfo.item_maps[2].shader = 0;
-		levelMenuInfo.item_maps[3].shader = 0;
+	for (n = 0; n < 4; n++) {
+		level = selectedArenaSet * ARENAS_PER_TIER + n;
+		arenaInfo = UI_GetArenaInfoByNumber(level);
+		UI_SPLevelMenu_SetMenuArena(n, level, arenaInfo);
 	}
-	else if( selectedArenaSet == finalTier ) {
-		arenaInfo = UI_GetSpecialArenaInfo( "final" );
-		level = atoi( Info_ValueForKey( arenaInfo, "num" ) );
-		UI_SPLevelMenu_SetMenuArena( 0, level, arenaInfo );
-		levelMenuInfo.selectedArenaInfo = arenaInfo;
 
-		levelMenuInfo.item_maps[0].generic.x = 256;
-		Bitmap_Init( &levelMenuInfo.item_maps[0] );
-		levelMenuInfo.item_maps[0].generic.bottom += 32;
-		levelMenuInfo.numMaps = 1;
-
-		levelMenuInfo.item_maps[1].generic.flags |= QMF_INACTIVE;
-		levelMenuInfo.item_maps[2].generic.flags |= QMF_INACTIVE;
-		levelMenuInfo.item_maps[3].generic.flags |= QMF_INACTIVE;
-		levelMenuInfo.levelPicNames[1][0] = 0;
-		levelMenuInfo.levelPicNames[2][0] = 0;
-		levelMenuInfo.levelPicNames[3][0] = 0;
-		levelMenuInfo.item_maps[1].shader = 0;
-		levelMenuInfo.item_maps[2].shader = 0;
-		levelMenuInfo.item_maps[3].shader = 0;
-	}
-	else {
-		levelMenuInfo.item_maps[0].generic.x = 46;
-		Bitmap_Init( &levelMenuInfo.item_maps[0] );
-		levelMenuInfo.item_maps[0].generic.bottom += 18;
-		levelMenuInfo.numMaps = 4;
-
-		for ( n = 0; n < 4; n++ ) {
-			level = selectedArenaSet * ARENAS_PER_TIER + n;
-			arenaInfo = UI_GetArenaInfoByNumber( level );
-			UI_SPLevelMenu_SetMenuArena( n, level, arenaInfo );
-		}
-
-		if( selectedArena != -1 ) {
-			levelMenuInfo.selectedArenaInfo = UI_GetArenaInfoByNumber( selectedArenaSet * ARENAS_PER_TIER + selectedArena );
-		}
+	if (selectedArena != -1) {
+		levelMenuInfo.selectedArenaInfo = UI_GetArenaInfoByNumber(selectedArenaSet * ARENAS_PER_TIER + selectedArena);
 	}
 
 	// enable/disable arrows when they are valid/invalid

@@ -1105,6 +1105,12 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\q3map\q3map.vcxproj">
+      <Project>{b347d665-9dab-4109-b2d0-4f41c13208ea}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\q3radiant\Radiant.vcxproj">
+      <Project>{649e9736-3eac-43ee-b027-88d1563c345a}</Project>
+    </ProjectReference>
     <ProjectReference Include="botlib\botlib.vcxproj">
       <Project>{a410161f-ae9f-485d-a01f-5294891430a6}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>

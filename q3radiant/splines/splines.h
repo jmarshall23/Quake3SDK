@@ -447,11 +447,11 @@ public:
 		name = p;
 	}
 
-	virtual startEdit() {
+	virtual void startEdit() {
 		editMode = true;
 	}
 
-	virtual stopEdit() {
+	virtual void stopEdit() {
 		editMode = false;
 	}
 

@@ -930,7 +930,7 @@ void CheckPlaneAgainstParents (int pnum, node_t *node)
 
 	for (p = node->parent; p; p = p->parent)
 	{
-		if (p->planenum == pnum) Error("Tried parent");
+	//	if (p->planenum == pnum) Error("Tried parent");
 	} //end for
 } //end of the function CheckPlaneAgainstParants
 //===========================================================================

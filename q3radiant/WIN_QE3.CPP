@@ -138,7 +138,7 @@ void Sys_ClearPrintf (void)
 void Sys_Printf (char *text, ...)
 {
 	va_list argptr;
-	char	buf[32768];
+	static char	buf[3002768];
 	char	*out;
 	LRESULT	result;				// PGM
 	DWORD	oldPosS, oldPosE;	// PGM

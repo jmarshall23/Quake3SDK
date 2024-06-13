@@ -949,7 +949,7 @@ brush_t* Cap(patchMesh_t *pParent, bool bByColumn, bool bFirst)
   vec3_t vTemp;
   for (j = 0; j < 3; j++)
   {
-    vTemp[j] = vMin[j] + abs((vMax[j] - vMin[j]) * 0.5);
+    vTemp[j] = vMin[j] + fabs((vMax[j] - vMin[j]) * 0.5);
   }
 
   int nCount = (bSmall) ? Interior3ByCount : Interior5ByCount;
@@ -1016,7 +1016,7 @@ brush_t* CapSpecial(patchMesh_t *pParent, int nType, bool bFirst)
 
   for (j = 0; j < 3; j++)
   {
-    vTemp[j] = vMin[j] + abs((vMax[j] - vMin[j]) * 0.5);
+    vTemp[j] = vMin[j] + fabs((vMax[j] - vMin[j]) * 0.5);
   }
 
   if (nType == CCapDialog::IBEVEL)
@@ -1254,7 +1254,7 @@ void GenerateEndCaps(brush_t *brushParent, bool bBevel, bool bEndcap, bool bInve
 
   for (j = 0; j < 3; j++)
   {
-    vTemp[j] = vMin[j] + abs((vMax[j] - vMin[j]) * 0.5);
+    vTemp[j] = vMin[j] + fabs((vMax[j] - vMin[j]) * 0.5);
   }
 
   for (i = 0; i < Interior3ByCount; i++)
@@ -1733,8 +1733,8 @@ brush_t* Patch_GenericMesh(int nWidth, int nHeight, int nOrientation, bool bDele
 	brush_t *b = selected_brushes.next;
 
   int xStep = b->mins[nFirst];
-  float xAdj = abs((b->maxs[nFirst] - b->mins[nFirst]) / (nWidth - 1));
-  float yAdj = abs((b->maxs[nSecond] - b->mins[nSecond]) / (nHeight - 1));
+  float xAdj = fabs((b->maxs[nFirst] - b->mins[nFirst]) / (nWidth - 1));
+  float yAdj = fabs((b->maxs[nSecond] - b->mins[nSecond]) / (nHeight - 1));
 
   for (i = 0; i < nWidth; i++)
   {
@@ -3848,8 +3848,8 @@ void Patch_ShiftTexture(patchMesh_t *p, float fx, float fy)
   //if (fy)
   //  fy = (fy > 0) ? 0.1 : -0.1;
 
-  fx = (abs(fx) >= 1) ? fx / 10 : fx;
-  fy = (abs(fy) >= 1) ? fy / 10 : fy;
+  fx = (fabs(fx) >= 1) ? fx / 10 : fx;
+  fy = (fabs(fy) >= 1) ? fy / 10 : fy;
 
   for (int w = 0; w < p->width; w++)
   {
