@@ -24813,7 +24813,7 @@
 }
 // entity 3
 {
-"origin" "1810 -976 -156"
+"origin" "1778 -1004 -156"
 "angle" "315"
 "model" "models/mapobjects/skel/skel_ribs.md3"
 "classname" "misc_model"
@@ -24829,7 +24829,7 @@
 "classname" "misc_model"
 "model" "models/mapobjects/skel/skel02mid.md3"
 "angle" "45"
-"origin" "741 -1274 -444"
+"origin" "710 -1302 -444"
 }
 // entity 6
 {
@@ -27396,12 +27396,12 @@
 "angle" "324"
 "classname" "misc_model"
 "model" "models/mapobjects/skull/skull.md3"
-"origin" "411 -661 -325"
+"origin" "383 -685 -325"
 }
 // entity 263
 {
 "angle" "315"
-"origin" "418 -645 -325"
+"origin" "388 -673 -325"
 "model" "models/mapobjects/skull/skull.md3"
 "classname" "misc_model"
 }

@@ -837,6 +837,57 @@ void SunToPlane( const vec3_t origin, const vec3_t normal, vec3_t color, traceWo
 
 /*
 ================
+GenerateHemisphereSample
+================
+*/
+void GenerateHemisphereSample(const vec3_t normal, vec3_t out) {
+	do {
+		out[0] = (rand() / (float)RAND_MAX) * 2.0f - 1.0f;
+		out[1] = (rand() / (float)RAND_MAX) * 2.0f - 1.0f;
+		out[2] = (rand() / (float)RAND_MAX) * 2.0f - 1.0f;
+	} while (VectorLength(out) > 1.0f);
+
+	VectorNormalize(out, out);
+
+	// Ensure the sample direction is in the hemisphere oriented around the normal
+	if (DotProduct(out, normal) < 0.0f) {
+		VectorNegate(out, out);
+	}
+}
+
+/*
+================
+CalculateAmbientOcclusion
+================
+*/
+float CalculateAmbientOcclusion(vec3_t origin, vec3_t normal, traceWork_t* tw) {
+	int numSamples = 512;
+	float aoFactor = 0.0f;
+	vec3_t sampleDir;
+	trace_t trace;
+
+	for (int i = 0; i < numSamples; i++) {
+		// Generate a random sample direction in the hemisphere around the normal
+		GenerateHemisphereSample(normal, sampleDir);
+
+		// Trace from the origin in the sample direction
+		VectorMA(origin, 64.0f, sampleDir, sampleDir);
+		TraceLine(origin, sampleDir, &trace, qtrue, tw);
+
+		// Accumulate occlusion factor
+		if (trace.passSolid) {
+			aoFactor += 1.0f;
+		}
+	}
+
+	// Average the occlusion factor
+	aoFactor = 1.0f - (aoFactor / numSamples);
+
+	return aoFactor;
+}
+
+/*
+================
 LightingAtSample
 ================
 */
@@ -850,6 +901,9 @@ void LightingAtSample( vec3_t origin, vec3_t normal, vec3_t color,
 	vec3_t		dir;
 
 	VectorCopy( ambientColor, color );
+
+	// Calculate ambient occlusion
+	float aoFactor = CalculateAmbientOcclusion(origin, normal, tw);
 
 	// trace to all the lights
 	for ( light = lights ; light ; light = light->next ) {
@@ -912,20 +966,25 @@ void LightingAtSample( vec3_t origin, vec3_t normal, vec3_t color,
 
 		// calculate the amount of light at this sample
 		if ( light->type == emit_point ) {
-			VectorSubtract( light->origin, origin, dir );
-			dist = VectorNormalize( dir, dir );
-			// clamp the distance to prevent super hot spots
-			if ( dist < 16 ) {
-				dist = 16;
+			VectorSubtract(light->origin, origin, dir);
+			dist = VectorNormalize(dir, dir);
+			dist = max(dist, 16); // Clamp distance
+
+			angle = DotProduct(normal, dir);
+			if (angle <= 0) continue;
+
+			if (light->type == emit_point) {
+				add = light->linearLight
+					? angle * light->photons * linearScale - dist
+					: light->photons / (dist * dist) * angle;
 			}
-			angle = DotProduct( normal, dir );
-			if ( light->linearLight ) {
-				add = angle * light->photons * linearScale - dist;
-				if ( add < 0 ) {
-					add = 0;
-				}
-			} else {
-				add = light->photons / ( dist * dist ) * angle;
+			else {
+				angle *= -DotProduct(light->normal, dir);
+				if (angle <= 0) continue;
+
+				add = light->linearLight
+					? angle * light->photons * linearScale - dist
+					: light->photons / (dist * dist) * angle;
 			}
 		} else if ( light->type == emit_spotlight ) {
 			float	distByNormal;
@@ -1020,6 +1079,14 @@ void LightingAtSample( vec3_t origin, vec3_t normal, vec3_t color,
 	if ( testOcclusion || forceSunLight ) {
 		SunToPlane( origin, normal, color, tw );
 	}
+
+	aoFactor = aoFactor * (aoFactor * 1.3f);
+	if (aoFactor > 1.0)
+		aoFactor = 1.0;
+
+	color[0] *= aoFactor;
+	color[1] *= aoFactor;
+	color[2] *= aoFactor;
 }
 
 /*
