@@ -965,28 +965,25 @@ void LightingAtSample( vec3_t origin, vec3_t normal, vec3_t color,
 		}
 
 		// calculate the amount of light at this sample
-		if ( light->type == emit_point ) {
+		if (light->type == emit_point) {
 			VectorSubtract(light->origin, origin, dir);
 			dist = VectorNormalize(dir, dir);
-			dist = max(dist, 16); // Clamp distance
-
+			// clamp the distance to prevent super hot spots
+			if (dist < 16) {
+				dist = 16;
+			}
 			angle = DotProduct(normal, dir);
-			if (angle <= 0) continue;
-
-			if (light->type == emit_point) {
-				add = light->linearLight
-					? angle * light->photons * linearScale - dist
-					: light->photons / (dist * dist) * angle;
+			if (light->linearLight) {
+				add = angle * light->photons * linearScale - dist;
+				if (add < 0) {
+					add = 0;
+				}
 			}
 			else {
-				angle *= -DotProduct(light->normal, dir);
-				if (angle <= 0) continue;
-
-				add = light->linearLight
-					? angle * light->photons * linearScale - dist
-					: light->photons / (dist * dist) * angle;
+				add = light->photons / (dist * dist) * angle;
 			}
-		} else if ( light->type == emit_spotlight ) {
+		}
+		else if (light->type == emit_spotlight) {
 			float	distByNormal;
 			vec3_t	pointAtDist;
 			float	radiusAtDist;
