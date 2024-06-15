@@ -28,7 +28,7 @@ typedef struct {
 	drawVert_t	*verts;
 } mesh_t;
 
-#define	MAX_EXPANDED_AXIS		128
+#define	MAX_EXPANDED_AXIS		256
 
 extern	int	originalWidths[MAX_EXPANDED_AXIS];
 extern	int	originalHeights[MAX_EXPANDED_AXIS];

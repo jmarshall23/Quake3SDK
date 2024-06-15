@@ -126,7 +126,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>.\Debug/q3map.pdb</ProgramDatabaseFile>
       <SubSystem>Console</SubSystem>
-      <StackReserveSize>4194304</StackReserveSize>
+      <StackReserveSize>41194304</StackReserveSize>
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
     <Midl>
@@ -164,7 +164,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>.\Release/q3map.pdb</ProgramDatabaseFile>
       <SubSystem>Console</SubSystem>
-      <StackReserveSize>4194304</StackReserveSize>
+      <StackReserveSize>41194304</StackReserveSize>
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
     <Midl>
@@ -201,7 +201,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>.\q3map___Win32_DebugTTimo/q3map.pdb</ProgramDatabaseFile>
       <SubSystem>Console</SubSystem>
-      <StackReserveSize>4194304</StackReserveSize>
+      <StackReserveSize>41194304</StackReserveSize>
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
     <Midl>
@@ -240,7 +240,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>.\q3map___Win32_ReleaseTTimo/q3map.pdb</ProgramDatabaseFile>
       <SubSystem>Console</SubSystem>
-      <StackReserveSize>4194304</StackReserveSize>
+      <StackReserveSize>41194304</StackReserveSize>
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
     <Midl>

@@ -3822,7 +3822,7 @@
 "angle" "315"
 "classname" "misc_model"
 "model" "models/mapobjects/teleporter/teleporter.md3"
-"origin" "104 1037 328"
+"origin" "120 1052 328"
 }
 // entity 6
 {
@@ -5560,7 +5560,7 @@
 // entity 158
 {
 "angle" "45"
-"origin" "105 -938 328"
+"origin" "120 -924 328"
 "model" "models/mapobjects/teleporter/teleporter.md3"
 "classname" "misc_model"
 }
