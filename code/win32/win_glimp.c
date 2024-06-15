@@ -329,23 +329,19 @@ static void GLW_CreatePFD( PIXELFORMATDESCRIPTOR *pPFD, int colorbits, int depth
 		PFD_SUPPORT_OPENGL |			// support OpenGL
 		PFD_DOUBLEBUFFER,				// double buffered
 		PFD_TYPE_RGBA,					// RGBA type
-		24,								// 24-bit color depth
+		32,								// 24-bit color depth
 		0, 0, 0, 0, 0, 0,				// color bits ignored
 		0,								// no alpha buffer
 		0,								// shift bit ignored
 		0,								// no accumulation buffer
 		0, 0, 0, 0, 					// accum bits ignored
-		24,								// 24-bit z-buffer	
+		32,								// 24-bit z-buffer	
 		8,								// 8-bit stencil buffer
 		0,								// no auxiliary buffer
 		PFD_MAIN_PLANE,					// main layer
 		0,								// reserved
 		0, 0, 0							// layer masks ignored
     };
-
-	src.cColorBits = colorbits;
-	src.cDepthBits = depthbits;
-	src.cStencilBits = stencilbits;
 
 	if ( stereo )
 	{
