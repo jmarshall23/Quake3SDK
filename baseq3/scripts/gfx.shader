@@ -772,7 +772,7 @@ flareShader
 {
 	cull none
 	{
-		map gfx/misc/flare.tga
+		map gfx/misc/flare5.tga
 		blendFunc GL_ONE GL_ONE
 		rgbGen vertex
 	}

@@ -1318,6 +1318,8 @@ typedef struct entityState_s {
 
 	int		groundEntityNum;	// -1 = in air
 
+	int		dl_intensity;       // used for coronas
+
 	int		constantLight;	// r + (g<<8) + (b<<16) + (intensity<<24)
 	int		loopSound;		// constantly loop this sound
 
@@ -1336,6 +1338,8 @@ typedef struct entityState_s {
 	int		weapon;			// determines weapon and flash model, etc
 	int		legsAnim;		// mask off ANIM_TOGGLEBIT
 	int		torsoAnim;		// mask off ANIM_TOGGLEBIT
+
+	float	density;
 
 	int		generic1;
 } entityState_t;

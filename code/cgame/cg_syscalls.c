@@ -401,3 +401,7 @@ qboolean trap_GetEntityToken(char* buffer, int bufferSize) {
 qboolean trap_R_inPVS(const vec3_t p1, const vec3_t p2) {
     return cgSyscall->R_inPVS(p1, p2);
 }
+
+void trap_R_AddCoronaToScene(const vec3_t org, float r, float g, float b, float scale, int id, int flags) {
+    cgSyscall->R_AddCoronaToScene(org, r, g, b, scale, id, flags);
+}

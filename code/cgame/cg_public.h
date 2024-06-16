@@ -157,6 +157,7 @@ typedef struct {
     void (*CIN_SetExtents)(int handle, int x, int y, int w, int h);
     qboolean(*GetEntityToken)(char* buffer, int bufferSize);
     qboolean(*R_inPVS)(const vec3_t p1, const vec3_t p2);
+    void	(*R_AddCoronaToScene)(const vec3_t org, float r, float g, float b, float scale, int id, int flags);
 } cgameImport_t;
 
 /*

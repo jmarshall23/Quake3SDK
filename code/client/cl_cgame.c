@@ -498,6 +498,7 @@ void CL_InitCGame( void ) {
 	cgExports.CIN_SetExtents = CIN_SetExtents;
 	cgExports.GetEntityToken = re.GetEntityToken;
 	cgExports.R_inPVS = re.inPVS;
+	cgExports.R_AddCoronaToScene = re.AddCoronaToScene;
 
 
 	t1 = Sys_Milliseconds();

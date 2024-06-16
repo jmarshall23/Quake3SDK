@@ -79,6 +79,8 @@ typedef struct {
 
 	void	(*BeginFrame)( stereoFrame_t stereoFrame );
 
+	void	(*AddCoronaToScene)(const vec3_t org, float r, float g, float b, float scale, int id, int flags);
+
 	// if the pointers are not NULL, timing info will be returned
 	void	(*EndFrame)( int *frontEndMsec, int *backEndMsec );
 

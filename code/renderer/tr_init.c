@@ -917,7 +917,7 @@ void R_Register( void )
 	//
 	r_lodCurveError = ri.Cvar_Get( "r_lodCurveError", "250", CVAR_ARCHIVE|CVAR_CHEAT );
 	r_lodbias = ri.Cvar_Get( "r_lodbias", "0", CVAR_ARCHIVE );
-	r_flares = ri.Cvar_Get ("r_flares", "0", CVAR_ARCHIVE );
+	r_flares = ri.Cvar_Get ("r_flares", "1", CVAR_ARCHIVE );
 	r_znear = ri.Cvar_Get( "r_znear", "4", CVAR_CHEAT );
 	AssertCvarRange( r_znear, 0.001f, 200, qtrue );
 	r_ignoreGLErrors = ri.Cvar_Get( "r_ignoreGLErrors", "1", CVAR_ARCHIVE );
@@ -1190,6 +1190,8 @@ refexport_t *GetRefAPI ( int apiVersion, refimport_t *rimp ) {
 
 	re.BeginFrame = RE_BeginFrame;
 	re.EndFrame = RE_EndFrame;
+
+	re.AddCoronaToScene = RE_AddCoronaToScene;
 
 	re.MarkFragments = R_MarkFragments;
 	re.LerpTag = R_LerpTag;

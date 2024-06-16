@@ -869,6 +869,22 @@ LINEAR : light falloff will be linear instead of inverse square of distance from
 
 //=============================================================================
 
+CORONA ENTITY
+
+//=============================================================================
+
+/*QUAKED corona (0 1 0) (-8 -8 -8) (8 8 8) LINEAR
+Non-displayed light entity.
+-------- KEYS --------
+light : value of light intensity (default 300).
+_color : weighted RGB value of light color (default white - 1 1 1).
+target : point this to an target_position, info_null or info_notnull to create a spotlight effect.
+radius : sets radius of light cone for spotlights (default 64). Light must target a pointing entity.
+-------- SPAWNFLAGS --------
+LINEAR : light falloff will be linear instead of inverse square of distance from source.*/
+
+//=============================================================================
+
 MISC_* ENTITIES
 
 //=============================================================================

@@ -35,6 +35,8 @@ int			r_firstScenePoly;
 
 int			r_numpolyverts;
 
+int			r_numcoronas;
+int			r_firstSceneCorona;
 
 /*
 ====================
@@ -57,6 +59,9 @@ void R_ToggleSmpFrame( void ) {
 
 	r_numdlights = 0;
 	r_firstSceneDlight = 0;
+
+	r_numcoronas = 0;
+	r_firstSceneCorona = 0;
 
 	r_numentities = 0;
 	r_firstSceneEntity = 0;
@@ -275,6 +280,32 @@ void RE_AddAdditiveLightToScene( const vec3_t org, float intensity, float r, flo
 }
 
 /*
+==============
+RE_AddCoronaToScene
+==============
+*/
+void RE_AddCoronaToScene(const vec3_t org, float r, float g, float b, float scale, int id, int flags) {
+	corona_t* cor;
+
+	if (!tr.registered) {
+		return;
+	}
+	if (r_numcoronas >= MAX_CORONAS) {
+		return;
+	}
+
+	cor = &backEndData[tr.smpFrame]->coronas[r_numcoronas++];
+	VectorCopy(org, cor->origin);
+	cor->color[0] = r;
+	cor->color[1] = g;
+	cor->color[2] = b;
+	cor->scale = scale;
+	cor->id = id;
+	cor->flags = flags;
+}
+
+
+/*
 @@@@@@@@@@@@@@@@@@@@@
 RE_RenderScene
 
@@ -354,6 +385,9 @@ void RE_RenderScene( const refdef_t *fd ) {
 
 	tr.refdef.num_dlights = r_numdlights - r_firstSceneDlight;
 	tr.refdef.dlights = &backEndData[tr.smpFrame]->dlights[r_firstSceneDlight];
+
+	tr.refdef.num_coronas = r_numcoronas - r_firstSceneCorona;
+	tr.refdef.coronas = &backEndData[tr.smpFrame]->coronas[r_firstSceneCorona];
 
 	tr.refdef.numPolys = r_numpolys - r_firstScenePoly;
 	tr.refdef.polys = &backEndData[tr.smpFrame]->polys[r_firstScenePoly];
