@@ -4,6 +4,7 @@ Quake 3 SDK
    * Vanilla Q3Map now compiles ambient occlusion into the lightmaps.
    * Stencil shadows now work.
    * Finished lens flare tech. 
+   * Replaced unfished MD4 mesh support with MDR support(from ioquake3, use Noesis to export FBX to MDR). 
    * Editor compiles and runs and integrated into the solution.
    * All SDK related files are included(map source that was included in the original point release for the 3 maps in the demo), and freshly compiled with the tools.
    * The Quake 3 DEMO files are in the baseq3.
