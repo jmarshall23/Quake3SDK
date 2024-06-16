@@ -208,43 +208,44 @@ typedef struct {
 	int			ofsEnd;				// end of file
 } md3Header_t;
 
+
 /*
 ==============================================================================
 
-MD4 file format
+MDR file format
 
 ==============================================================================
 */
 
-#define MD4_IDENT			(('4'<<24)+('P'<<16)+('D'<<8)+'I')
-#define MD4_VERSION			1
-#define	MD4_MAX_BONES		128
+#define MDR_IDENT	(('5'<<24)+('M'<<16)+('D'<<8)+'R')
+#define MDR_VERSION	2
+#define	MDR_MAX_BONES	128
 
 typedef struct {
-	int			boneIndex;		// these are indexes into the boneReferences,
+	int			boneIndex;	// these are indexes into the boneReferences,
 	float		   boneWeight;		// not the global per-frame bone list
 	vec3_t		offset;
-} md4Weight_t;
+} mdrWeight_t;
 
 typedef struct {
 	vec3_t		normal;
 	vec2_t		texCoords;
 	int			numWeights;
-	md4Weight_t	weights[1];		// variable sized
-} md4Vertex_t;
+	mdrWeight_t	weights[1];		// variable sized
+} mdrVertex_t;
 
 typedef struct {
 	int			indexes[3];
-} md4Triangle_t;
+} mdrTriangle_t;
 
 typedef struct {
 	int			ident;
 
 	char		name[MAX_QPATH];	// polyset name
 	char		shader[MAX_QPATH];
-	int			shaderIndex;		// for in-game use
+	int			shaderIndex;	// for in-game use
 
-	int			ofsHeader;			// this will be a negative number
+	int			ofsHeader;	// this will be a negative number
 
 	int			numVerts;
 	int			ofsVerts;
@@ -260,25 +261,42 @@ typedef struct {
 	int			numBoneReferences;
 	int			ofsBoneReferences;
 
-	int			ofsEnd;				// next surface follows
-} md4Surface_t;
+	int			ofsEnd;		// next surface follows
+} mdrSurface_t;
 
 typedef struct {
 	float		matrix[3][4];
-} md4Bone_t;
+} mdrBone_t;
 
 typedef struct {
-	vec3_t		bounds[2];			// bounds of all surfaces of all LOD's for this frame
+	vec3_t		bounds[2];		// bounds of all surfaces of all LOD's for this frame
 	vec3_t		localOrigin;		// midpoint of bounds, used for sphere cull
-	float		radius;				// dist from localOrigin to corner
-	md4Bone_t	bones[1];			// [numBones]
-} md4Frame_t;
+	float		radius;			// dist from localOrigin to corner
+	char		name[16];
+	mdrBone_t	bones[1];		// [numBones]
+} mdrFrame_t;
+
+typedef struct {
+	unsigned char Comp[24]; // MC_COMP_BYTES is in MatComp.h, but don't want to couple
+} mdrCompBone_t;
+
+typedef struct {
+	vec3_t          bounds[2];		// bounds of all surfaces of all LOD's for this frame
+	vec3_t          localOrigin;		// midpoint of bounds, used for sphere cull
+	float           radius;			// dist from localOrigin to corner
+	mdrCompBone_t   bones[1];		// [numBones]
+} mdrCompFrame_t;
 
 typedef struct {
 	int			numSurfaces;
 	int			ofsSurfaces;		// first surface, others follow
 	int			ofsEnd;				// next lod follows
-} md4LOD_t;
+} mdrLOD_t;
+
+typedef struct {
+	int                     boneIndex;
+	char            name[32];
+} mdrTag_t;
 
 typedef struct {
 	int			ident;
@@ -289,15 +307,17 @@ typedef struct {
 	// frames and bones are shared by all levels of detail
 	int			numFrames;
 	int			numBones;
-	int			ofsBoneNames;		// char	name[ MAX_QPATH ]
-	int			ofsFrames;			// md4Frame_t[numFrames]
+	int			ofsFrames;			// mdrFrame_t[numFrames]
 
 	// each level of detail has completely separate sets of surfaces
 	int			numLODs;
 	int			ofsLODs;
 
+	int                     numTags;
+	int                     ofsTags;
+
 	int			ofsEnd;				// end of file
-} md4Header_t;
+} mdrHeader_t;
 
 
 /*

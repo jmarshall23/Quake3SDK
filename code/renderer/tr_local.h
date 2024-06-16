@@ -535,7 +535,7 @@ typedef enum {
 	SF_TRIANGLES,
 	SF_POLY,
 	SF_MD3,
-	SF_MD4,
+	SF_MDR,
 	SF_FLARE,
 	SF_ENTITY,				// beams, rails, lightning, etc that can be determined by entity
 	SF_DISPLAY_LIST,
@@ -748,7 +748,7 @@ typedef enum {
 	MOD_BAD,
 	MOD_BRUSH,
 	MOD_MESH,
-	MOD_MD4
+	MOD_MDR
 } modtype_t;
 
 typedef struct model_s {
@@ -759,7 +759,7 @@ typedef struct model_s {
 	int			dataSize;			// just for listing purposes
 	bmodel_t	*bmodel;			// only if type == MOD_BRUSH
 	md3Header_t	*md3[MD3_MAX_LODS];	// only if type == MOD_MESH
-	md4Header_t	*md4;				// only if type == MOD_MD4
+	mdrHeader_t	*mdr;				// only if type == MOD_MDR
 
 	int			 numLods;
 } model_t;
@@ -1437,14 +1437,32 @@ void RE_RenderScene( const refdef_t *fd );
 /*
 =============================================================
 
+UNCOMPRESSING BONES
+
+=============================================================
+*/
+
+#define MC_BITS_X (16)
+#define MC_BITS_Y (16)
+#define MC_BITS_Z (16)
+#define MC_BITS_VECT (16)
+
+#define MC_SCALE_X (1.0f/64)
+#define MC_SCALE_Y (1.0f/64)
+#define MC_SCALE_Z (1.0f/64)
+
+void MC_UnCompress(float mat[3][4], const unsigned char* comp);
+
+/*
+=============================================================
+
 ANIMATED MODELS
 
 =============================================================
 */
 
-void R_MakeAnimModel( model_t *model );
-void R_AddAnimSurfaces( trRefEntity_t *ent );
-void RB_SurfaceAnim( md4Surface_t *surfType );
+void R_MDRAddAnimSurfaces(trRefEntity_t* ent);
+void RB_MDRSurfaceAnim(mdrSurface_t* surface);
 
 /*
 =============================================================
